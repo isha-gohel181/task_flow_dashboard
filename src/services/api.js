@@ -30,10 +30,10 @@ export async function createTask(taskData) {
   return handleResponse(response)
 }
 
-// Update an existing task
+// Update an existing task (partial update)
 export async function updateTask(id, taskData) {
   const response = await fetch(`${BASE_URL}/${id}`, {
-    method: 'PUT',
+    method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(taskData),
   })

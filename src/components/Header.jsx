@@ -1,16 +1,14 @@
 import { Link } from 'react-router-dom'
 
-function Header() {
+function Header({ completedCount = 0 }) {
   return (
     <header className="header">
-      {/* Link to="/" navigates to the Dashboard route
-          without reloading the page */}
       <Link to="/" className="header-logo">
-        TaskFlow
+        TaskFlow Dashboard
       </Link>
-      <nav className="header-nav">
-        <Link to="/">Dashboard</Link>
-      </nav>
+      <span className="header-counter">
+        {completedCount} completed
+      </span>
     </header>
   )
 }

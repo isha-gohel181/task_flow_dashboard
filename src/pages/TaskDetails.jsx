@@ -1,52 +1,92 @@
-import { useParams, useNavigate, Link } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
+import { getTask, deleteTask } from '../services/api'
+import Loading from '../components/Loading'
+import ErrorState from '../components/ErrorState'
 
-// Same sample data — in a real app you'd fetch by id.
-const sampleTasks = [
-  { id: 1, title: 'Design homepage wireframe', status: 'In Progress',
-    description: 'Create low-fidelity wireframes for the homepage layout including hero section, features grid, and footer.' },
-  { id: 2, title: 'Set up project repository',  status: 'Completed',
-    description: 'Initialize Git repo, configure CI/CD pipeline, and add branch protection rules.' },
-  { id: 3, title: 'Write API documentation',    status: 'Pending',
-    description: 'Document all REST endpoints with request/response examples using OpenAPI spec.' },
-]
-
-function TaskDetails() {
-  // ① Pull the :id parameter from the URL
+function TaskDetails({ tasks, setTasks }) {
   const { id } = useParams()
-
-  // ② Get the navigate function for programmatic navigation
   const navigate = useNavigate()
 
-  // ③ Find the matching task (id from URL is always a string)
-  const task = sampleTasks.find((t) => t.id === Number(id))
+  const [task, setTask] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [deleting, setDeleting] = useState(false)
 
-  // ④ Handle "not found"
-  if (!task) {
-    return (
-      <section className="task-details">
-        <h1>Task not found</h1>
-        <p>No task with id "{id}" exists.</p>
-        {/* Link navigates back to the dashboard */}
-        <Link to="/" className="back-link">← Back to Dashboard</Link>
-      </section>
-    )
+  const fetchTask = async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      const data = await getTask(id)
+      setTask(data)
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
   }
+
+  useEffect(() => {
+    fetchTask()
+  }, [id])
+
+  // DELETE /todos/:id, update parent state, navigate back
+  const handleDelete = async () => {
+    setDeleting(true)
+    try {
+      await deleteTask(id)
+      setTasks(tasks.filter((t) => t.id !== Number(id)))
+      navigate('/')
+    } catch (err) {
+      alert('Failed to delete task: ' + err.message)
+      setDeleting(false)
+    }
+  }
+
+  if (loading) return <Loading />
+  if (error) return <ErrorState message={error} onRetry={fetchTask} />
 
   return (
     <section className="task-details">
-      {/* Button uses navigate(-1) to go back one step in history,
-          or navigate('/') to go to a specific route */}
-      <button className="back-btn" onClick={() => navigate('/')}>
-        ← Back to Dashboard
-      </button>
+      <div className="detail-top-bar">
+        <button className="back-btn" onClick={() => navigate('/')}>
+          ← Back
+        </button>
+        <button
+          className="detail-delete-btn"
+          onClick={handleDelete}
+          disabled={deleting}
+        >
+          {deleting ? 'Deleting...' : 'Delete Task'}
+        </button>
+      </div>
 
       <div className="detail-card">
-        <h1>{task.title}</h1>
-        <span className={`task-status status-${task.status.toLowerCase().replace(' ', '-')}`}>
-          {task.status}
-        </span>
-        <p className="detail-description">{task.description}</p>
-        <p className="detail-id">Task ID: {id}</p>
+        <div className="detail-row">
+          <span className="detail-label">Task ID</span>
+          <span className="detail-value">{task.id}</span>
+        </div>
+        <div className="detail-row">
+          <span className="detail-label">User ID</span>
+          <span className="detail-value">{task.userId}</span>
+        </div>
+        <div className="detail-row">
+          <span className="detail-label">Title</span>
+          <span className="detail-value">{task.title}</span>
+        </div>
+        <div className="detail-row">
+          <span className="detail-label">Status</span>
+          <span className={`task-status ${task.completed ? 'status-completed' : 'status-pending'}`}>
+            {task.completed ? 'Completed' : 'Pending'}
+          </span>
+        </div>
+        <div className="detail-row">
+          <span className="detail-label">Description</span>
+          <span className="detail-value detail-description">
+            This is a placeholder description for the task. In a real application,
+            this would contain detailed information about what needs to be done.
+          </span>
+        </div>
       </div>
     </section>
   )

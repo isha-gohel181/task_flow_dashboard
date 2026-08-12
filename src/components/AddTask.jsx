@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-function AddTask({ onAdd }) {
+function AddTask({ onAdd, adding }) {
   const [title, setTitle] = useState('')
 
   const handleSubmit = (e) => {
@@ -19,9 +19,10 @@ function AddTask({ onAdd }) {
         placeholder="Add a new task..."
         value={title}
         onChange={(e) => setTitle(e.target.value)}
+        disabled={adding}
       />
-      <button type="submit" className="add-task-btn">
-        Add
+      <button type="submit" className="add-task-btn" disabled={adding}>
+        {adding ? 'Adding...' : 'Add'}
       </button>
     </form>
   )

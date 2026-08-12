@@ -1,62 +1,59 @@
-import { useState, useEffect } from 'react'
-import { getTasks } from '../services/api'
+import { useState } from 'react'
+import { createTask, updateTask, deleteTask } from '../services/api'
 import AddTask from '../components/AddTask'
 import TaskList from '../components/TaskList'
-import Loading from '../components/Loading'
-import ErrorState from '../components/ErrorState'
 
-function Dashboard() {
-  // State for the task list, loading flag, and error message
-  const [tasks, setTasks] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+function Dashboard({ tasks, setTasks }) {
+  const [adding, setAdding] = useState(false)
 
-  // Fetch tasks from the API when the component mounts
-  const fetchTasks = async () => {
-    setLoading(true)
-    setError(null)
+  // POST to /todos, then add to local state
+  const handleAddTask = async (title) => {
+    setAdding(true)
     try {
-      const data = await getTasks()
-      setTasks(data)
+      const data = await createTask({ title, completed: false, userId: 1 })
+      // Use Date.now() for unique id since JSONPlaceholder always returns id: 201
+      setTasks([{ ...data, id: Date.now() }, ...tasks])
     } catch (err) {
-      setError(err.message)
+      alert('Failed to add task: ' + err.message)
     } finally {
-      setLoading(false)
+      setAdding(false)
     }
   }
 
-  // useEffect runs once on mount (empty dependency array)
-  useEffect(() => {
-    fetchTasks()
-  }, [])
+  // PATCH /todos/:id, then update local state
+  const handleToggle = async (id) => {
+    const task = tasks.find((t) => t.id === id)
+    if (!task) return
 
-  // Add a new task to the local list
-  const handleAddTask = (title) => {
-    const newTask = {
-      id: Date.now(),
-      title,
-      completed: false,
-    }
-    setTasks([newTask, ...tasks])
-  }
-
-  // Toggle task completed status
-  const handleToggle = (id) => {
-    setTasks(tasks.map((task) =>
-      task.id === id ? { ...task, completed: !task.completed } : task
+    // Update local state immediately for responsiveness
+    setTasks(tasks.map((t) =>
+      t.id === id ? { ...t, completed: !t.completed } : t
     ))
+
+    try {
+      await updateTask(id, { completed: !task.completed })
+    } catch (err) {
+      // Revert on failure
+      setTasks(tasks.map((t) =>
+        t.id === id ? { ...t, completed: task.completed } : t
+      ))
+      alert('Failed to update task: ' + err.message)
+    }
   }
 
-  // Delete a task from the local list
-  const handleDelete = (id) => {
-    setTasks(tasks.filter((task) => task.id !== id))
+  // DELETE /todos/:id, then remove from local state
+  const handleDelete = async (id) => {
+    const previousTasks = [...tasks]
+    setTasks(tasks.filter((t) => t.id !== id))
+
+    try {
+      await deleteTask(id)
+    } catch (err) {
+      // Revert on failure
+      setTasks(previousTasks)
+      alert('Failed to delete task: ' + err.message)
+    }
   }
-
-  // Show loading spinner while fetching
-  if (loading) return <Loading />
-
-  // Show error with retry button if fetch failed
-  if (error) return <ErrorState message={error} onRetry={fetchTasks} />
 
   return (
     <section className="dashboard">
@@ -67,7 +64,7 @@ function Dashboard() {
         </p>
       </div>
 
-      <AddTask onAdd={handleAddTask} />
+      <AddTask onAdd={handleAddTask} adding={adding} />
       <TaskList
         tasks={tasks}
         onToggle={handleToggle}

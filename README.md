@@ -1,16 +1,88 @@
-# React + Vite
+# TaskFlow Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A responsive task management dashboard built with React. Features CRUD operations, routing, API integration, and loading/error handling.
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- React
+- React Router DOM
+- Plain CSS
+- JavaScript (ES6+)
+- Fetch API
+- Vite (build tool)
 
-## React Compiler
+## API
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Uses [JSONPlaceholder](https://jsonplaceholder.typicode.com) as a mock REST API.
 
-## Expanding the ESLint configuration
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | /todos?_limit=10 | Fetch all tasks |
+| GET | /todos/:id | Fetch a single task |
+| POST | /todos | Create a new task |
+| PATCH | /todos/:id | Update a task |
+| DELETE | /todos/:id | Delete a task |
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+> **Note:** JSONPlaceholder is a mock API. POST, PATCH, and DELETE return successful responses but do not persist changes. Local React state is updated to reflect all operations.
+
+## Features
+
+- Dashboard with task list and completed task counter
+- Add new tasks with disabled state during API request
+- Toggle task completion (checkbox with line-through styling)
+- Delete tasks from the dashboard or task details page
+- Task details page showing Task ID, User ID, Title, Status, and Description
+- Loading spinner, error state with retry, and empty state
+- Fully responsive (mobile, tablet, desktop)
+
+## Getting Started
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) (v18 or higher)
+- npm
+
+### Installation
+
+```bash
+git clone https://github.com/isha-gohel181/task_flow_dashboard.git
+cd task_flow_dashboard
+npm install
+```
+
+### Run Development Server
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:5173](http://localhost:5173) in your browser.
+
+### Build for Production
+
+```bash
+npm run build
+```
+
+## Project Structure
+
+```
+src/
+├── components/
+│   ├── AddTask.jsx       # Add task form with disabled state
+│   ├── EmptyState.jsx    # Empty list message
+│   ├── ErrorState.jsx    # Error message with retry button
+│   ├── Header.jsx        # App header with completed counter
+│   ├── Loading.jsx       # Loading spinner
+│   ├── TaskItem.jsx      # Single task row (checkbox, title, delete)
+│   └── TaskList.jsx      # Task list container
+├── pages/
+│   ├── Dashboard.jsx     # Main dashboard (CRUD operations)
+│   └── TaskDetails.jsx   # Task detail view with delete
+├── services/
+│   └── api.js            # Fetch API service (CRUD functions)
+├── App.jsx               # Root component with routes
+├── App.css               # Component styles
+├── index.css             # Global styles and design tokens
+└── main.jsx              # Entry point with BrowserRouter
+```
