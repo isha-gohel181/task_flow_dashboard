@@ -8,9 +8,9 @@ async function handleResponse(response) {
   return response.json()
 }
 
-// Fetch all tasks (limited to 20)
+// Fetch all tasks (limited to 10)
 export async function getTasks() {
-  const response = await fetch(`${BASE_URL}?_limit=20`)
+  const response = await fetch(`${BASE_URL}?_limit=10`)
   return handleResponse(response)
 }
 
