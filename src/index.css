@@ -1,37 +1,48 @@
+/* ── Design Tokens (TaskFlow Light Theme) ─────────────── */
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --accent: #7c3aed;
-  --accent-bg: rgba(124, 58, 237, 0.08);
-  --accent-border: rgba(124, 58, 237, 0.35);
-  --shadow:
-    rgba(0, 0, 0, 0.08) 0 4px 12px -2px, rgba(0, 0, 0, 0.04) 0 2px 4px -1px;
+  /* Primary (Green accent) */
+  --accent: #16A34A;
+  --accent-hover: #15803D;
+  --accent-soft: #DCFCE7;
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+  /* Status colors */
+  --pending-bg: #FEF3C7;
+  --pending-text: #B45309;
+  --completed-bg: #DCFCE7;
+  --completed-text: #15803D;
+  --delete-bg: #FEF2F2;
+  --delete-text: #DC2626;
 
-  font: 16px/1.5 var(--sans);
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
+  /* Backgrounds */
+  --bg-page: #F8FAFC;
+  --bg-card: #FFFFFF;
+  --bg-sidebar: #FFFFFF;
+  --bg-input: #F8FAFC;
+
+  /* Text */
+  --text-h: #0F172A;
+  --text-primary: #1E293B;
+  --text-secondary: #64748B;
+  --text-muted: #94A3B8;
+
+  /* Borders & Radius */
+  --border: #E2E8F0;
+  --radius-card: 10px;
+  --radius-btn: 7px;
+  --radius-pill: 999px;
+
+  /* Shadows (subtle) */
+  --shadow-subtle: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+
+  /* Typography */
+  --sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+
+  font: 16px/1.6 var(--sans);
+  color: var(--text-primary);
+  background: var(--bg-page);
   -webkit-font-smoothing: antialiased;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #0f1117;
-    --border: #23252f;
-    --accent: #a78bfa;
-    --accent-bg: rgba(167, 139, 250, 0.1);
-    --accent-border: rgba(167, 139, 250, 0.4);
-    --shadow:
-      rgba(0, 0, 0, 0.3) 0 4px 12px -2px, rgba(0, 0, 0, 0.2) 0 2px 4px -1px;
-  }
+  -moz-osx-font-smoothing: grayscale;
 }
 
 *,
@@ -42,23 +53,22 @@
 
 body {
   margin: 0;
+  background-color: var(--bg-page);
+  color: var(--text-primary);
+  font-family: var(--sans);
 }
 
 #root {
-  width: 860px;
-  max-width: 100%;
-  margin: 0 auto;
-  border-inline: 1px solid var(--border);
-  min-height: 100dvh;
+  min-height: 100vh;
   display: flex;
-  flex-direction: column;
+  background-color: var(--bg-page);
 }
 
-h1,
-h2 {
-  font-family: var(--heading);
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--sans);
   font-weight: 600;
   color: var(--text-h);
+  margin: 0;
 }
 
 p {

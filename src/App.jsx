@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import { getTasks } from './services/api'
-import Header from './components/Header'
+import Sidebar from './components/Sidebar'
+import Topbar from './components/Topbar'
+import Toast from './components/Toast'
 import Dashboard from './pages/Dashboard'
 import TaskDetails from './pages/TaskDetails'
 import Loading from './components/Loading'
@@ -12,6 +14,15 @@ function App() {
   const [tasks, setTasks] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [mobileOpen, setMobileOpen] = useState(false)
+  const [toast, setToast] = useState(null)
+
+  const showToast = (message, type = 'success') => {
+    setToast({ message, type })
+    setTimeout(() => {
+      setToast(null)
+    }, 3000)
+  }
 
   const fetchTasks = async () => {
     setLoading(true)
@@ -31,35 +42,56 @@ function App() {
   }, [])
 
   const completedCount = tasks.filter((t) => t.completed).length
-
-  if (loading) return <Loading />
-  if (error) return <ErrorState message={error} onRetry={fetchTasks} />
+  const totalCount = tasks.length
 
   return (
-    <>
-      <Header completedCount={completedCount} />
+    <div className="app-container">
+      <Sidebar 
+        mobileOpen={mobileOpen} 
+        setMobileOpen={setMobileOpen} 
+      />
 
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <Dashboard
-              tasks={tasks}
-              setTasks={setTasks}
-            />
-          }
+      <div className="main-wrapper">
+        <Topbar 
+          onMenuClick={() => setMobileOpen(true)}
+          completedCount={completedCount}
+          totalCount={totalCount}
         />
-        <Route
-          path="/tasks/:id"
-          element={
-            <TaskDetails
-              tasks={tasks}
-              setTasks={setTasks}
-            />
-          }
-        />
-      </Routes>
-    </>
+
+        <main className="main-content">
+          {loading ? (
+            <Loading />
+          ) : error ? (
+            <ErrorState message={error} onRetry={fetchTasks} />
+          ) : (
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <Dashboard
+                    tasks={tasks}
+                    setTasks={setTasks}
+                    showToast={showToast}
+                  />
+                }
+              />
+              <Route
+                path="/tasks/:id"
+                element={
+                  <TaskDetails
+                    tasks={tasks}
+                    setTasks={setTasks}
+                    showToast={showToast}
+                  />
+                }
+              />
+            </Routes>
+          )}
+        </main>
+      </div>
+
+      <Toast toast={toast} onClose={() => setToast(null)} />
+    </div>
   )
 }
 

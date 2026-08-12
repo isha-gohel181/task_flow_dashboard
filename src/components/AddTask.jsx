@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Plus } from 'lucide-react'
 
 function AddTask({ onAdd, adding }) {
   const [title, setTitle] = useState('')
@@ -12,19 +13,23 @@ function AddTask({ onAdd, adding }) {
   }
 
   return (
-    <form className="add-task" onSubmit={handleSubmit}>
-      <input
-        type="text"
-        className="add-task-input"
-        placeholder="Add a new task..."
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        disabled={adding}
-      />
-      <button type="submit" className="add-task-btn" disabled={adding}>
-        {adding ? 'Adding...' : 'Add'}
-      </button>
-    </form>
+    <div className="add-task-card">
+      <h3 className="add-task-heading">Add a new task</h3>
+      <form className="add-task-form" onSubmit={handleSubmit}>
+        <input
+          type="text"
+          className="add-task-input"
+          placeholder="What needs to be done?"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          disabled={adding}
+        />
+        <button type="submit" className="add-task-btn" disabled={adding}>
+          <Plus size={16} />
+          <span>{adding ? 'Adding...' : 'Add Task'}</span>
+        </button>
+      </form>
+    </div>
   )
 }
 
