@@ -2,6 +2,16 @@
 
 A modern, responsive TaskFlow Dashboard application built with **React**, **React Router DOM**, **Lucide Icons**, and **Plain CSS**. Features complete CRUD operations, dynamic stats, responsive sidebar layout, loading/error states, and detailed task management views.
 
+## Screenshots & Preview
+
+### 📊 Dashboard Overview
+![Dashboard Overview](./screenshots/dashoboard.png)
+
+### 📋 Task Details View
+![Task Details View](./screenshots/task_detail.png)
+
+---
+
 ## Tech Stack
 
 - **React** (v19)
